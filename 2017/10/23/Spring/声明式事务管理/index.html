@@ -78,7 +78,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Redis,环境配置," />
+  <meta name="keywords" content="Spring," />
 
 
 
@@ -94,30 +94,18 @@
 
 
 
-<meta name="description" content="1、下载 msi 安装包地址：Redis安装包  2、安装注意将安装路径加入环境变量，其它选项一直点next就可以。   安装完后，在命令行输入redis-cli，出现如下提示则说明安装成功。  3、将Redis注册成服务在命令行切换到redis安装目录，然后执行redis-server --service-install redis.windows-service.conf，若执行后如下所示，则">
-<meta name="keywords" content="Redis,环境配置">
+<meta name="description" content="让Spring事务管理事务 让Spring管理事务，只需要3步： 1.在配置类上加上@EnableTransactionManagement注解； 2.配置一个事务管理器的bean，通常是PlatformTransactionManager接口的实现类DataSourceTransactionManager； 3.在业务方法上加上@Transactional注解。">
+<meta name="keywords" content="Spring">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Windows环境下Redis安装">
-<meta property="og:url" content="http://yoursite.com/2017/10/23/Windows环境下Redis安装/index.html">
+<meta property="og:title" content="声明式事务管理">
+<meta property="og:url" content="http://yoursite.com/2017/10/23/Spring/声明式事务管理/index.html">
 <meta property="og:site_name" content="fanchaoo">
-<meta property="og:description" content="1、下载 msi 安装包地址：Redis安装包  2、安装注意将安装路径加入环境变量，其它选项一直点next就可以。   安装完后，在命令行输入redis-cli，出现如下提示则说明安装成功。  3、将Redis注册成服务在命令行切换到redis安装目录，然后执行redis-server --service-install redis.windows-service.conf，若执行后如下所示，则">
+<meta property="og:description" content="让Spring事务管理事务 让Spring管理事务，只需要3步： 1.在配置类上加上@EnableTransactionManagement注解； 2.配置一个事务管理器的bean，通常是PlatformTransactionManager接口的实现类DataSourceTransactionManager； 3.在业务方法上加上@Transactional注解。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/32937095.jpg">
-<meta property="og:image" content="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/12956212.jpg">
-<meta property="og:image" content="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/53436372.jpg">
-<meta property="og:image" content="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/85041154.jpg">
-<meta property="og:image" content="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/54352560.jpg">
-<meta property="og:image" content="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/33008769.jpg">
-<meta property="og:image" content="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/24240075.jpg">
-<meta property="og:image" content="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/34032713.jpg">
-<meta property="og:image" content="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/74697387.jpg">
-<meta property="og:image" content="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/8575460.jpg">
-<meta property="og:image" content="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/81575421.jpg">
-<meta property="og:updated_time" content="2018-06-28T15:13:18.873Z">
+<meta property="og:updated_time" content="2019-01-22T14:40:11.425Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Windows环境下Redis安装">
-<meta name="twitter:description" content="1、下载 msi 安装包地址：Redis安装包  2、安装注意将安装路径加入环境变量，其它选项一直点next就可以。   安装完后，在命令行输入redis-cli，出现如下提示则说明安装成功。  3、将Redis注册成服务在命令行切换到redis安装目录，然后执行redis-server --service-install redis.windows-service.conf，若执行后如下所示，则">
-<meta name="twitter:image" content="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/32937095.jpg">
+<meta name="twitter:title" content="声明式事务管理">
+<meta name="twitter:description" content="让Spring事务管理事务 让Spring管理事务，只需要3步： 1.在配置类上加上@EnableTransactionManagement注解； 2.配置一个事务管理器的bean，通常是PlatformTransactionManager接口的实现类DataSourceTransactionManager； 3.在业务方法上加上@Transactional注解。">
 
 
 
@@ -146,13 +134,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/10/23/Windows环境下Redis安装/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/10/23/Spring/声明式事务管理/"/>
 
 
 
 
 
-  <title>Windows环境下Redis安装 | fanchaoo</title>
+  <title>声明式事务管理 | fanchaoo</title>
   
 
 
@@ -305,7 +293,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/23/Windows环境下Redis安装/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/23/Spring/声明式事务管理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="fanchaoo">
@@ -322,7 +310,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Windows环境下Redis安装</h1>
+          <h1 class="post-title" itemprop="name headline">声明式事务管理</h1>
         
 
         <div class="post-meta">
@@ -357,8 +345,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/环境配置/" itemprop="url" rel="index">
-                    <span itemprop="name">环境配置</span>
+                  <a href="/categories/Spring/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring</span>
                   </a>
                 </span>
 
@@ -394,28 +382,11 @@
       
 
       
-        <h3 id="1、下载-msi-安装包"><a href="#1、下载-msi-安装包" class="headerlink" title="1、下载 msi 安装包"></a>1、下载 msi 安装包</h3><p>地址：<a href="https://github.com/MicrosoftArchive/redis/releases" target="_blank" rel="external">Redis安装包</a></p>
-<p><img src="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/32937095.jpg" alt=""></p>
-<h3 id="2、安装"><a href="#2、安装" class="headerlink" title="2、安装"></a>2、安装</h3><p>注意将安装路径加入环境变量，其它选项一直点next就可以。</p>
-<p><img src="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/12956212.jpg" alt="将安装路径加入环境变量"></p>
-<p><img src="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/53436372.jpg" alt="点击Install"></p>
-<p>安装完后，在命令行输入<code>redis-cli</code>，出现如下提示则说明安装成功。</p>
-<p><img src="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/85041154.jpg" alt=""></p>
-<h3 id="3、将Redis注册成服务"><a href="#3、将Redis注册成服务" class="headerlink" title="3、将Redis注册成服务"></a>3、将Redis注册成服务</h3><p>在命令行切换到redis安装目录，然后执行<code>redis-server --service-install redis.windows-service.conf</code>，若执行后如下所示，则一切正常。</p>
-<p><img src="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/54352560.jpg" alt=""></p>
-<p>紧接着执行<code>redis-server --service-start</code>,若有报错可以忽略。</p>
-<p>再去“任务管理器”的“服务”一栏看下，有没有“Redis”这个服务，若有，则说明注册成功。</p>
-<p><img src="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/33008769.jpg" alt=""></p>
-<h3 id="4、配置Redis密码"><a href="#4、配置Redis密码" class="headerlink" title="4、配置Redis密码"></a>4、配置Redis密码</h3><p>首先找到配置文件，<code>redis.windows-service.conf</code>。</p>
-<p><img src="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/24240075.jpg" alt=""></p>
-<p>然后修改配置文件，在大约443行左右，将“requirepass”前面的“#”去掉，并将后面的内容修改为你的密码，保存。</p>
-<p><img src="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/34032713.jpg" alt=""></p>
-<p>我这里的Windows10直接保存会报错，这样可以先将文件复制到桌面上，修改完后，在复制回来，覆盖原文件。如果你没有报错则可以忽略这一步。</p>
-<p><img src="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/74697387.jpg" alt=""></p>
-<p>接着重启服务，在<code>C:\Windows\System32</code>找到<code>cmd.exe</code>文件，右键以管理员身份打开。<br>在命令行输入<code>net stop redis</code>，然后输入<code>net start redis</code>。<br>若如下图所示，则说明重启成功。</p>
-<p><img src="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/8575460.jpg" alt=""></p>
-<p>最后验证，密码是否设置成功。<br>输入<code>redis-cli</code>之后，输入<code>keys *</code>，若显示<code>(error) NOAUTH Authentication required.</code>，则说明密码设置成功。<br>然后输入<code>auth 你的密码</code>，这时认证完成。再输入<code>keys *</code>，则出现正确内容。至此Redis安装完成。</p>
-<p><img src="http://oy2qbfbi8.bkt.clouddn.com/17-10-22/81575421.jpg" alt=""></p>
+        <p>让Spring事务管理事务</p>
+<p>让Spring管理事务，只需要3步：</p>
+<p>1.在配置类上加上<code>@EnableTransactionManagement</code>注解；</p>
+<p>2.配置一个事务管理器的bean，通常是<code>PlatformTransactionManager</code>接口的实现类<code>DataSourceTransactionManager</code>；</p>
+<p>3.在业务方法上加上<code>@Transactional</code>注解。</p>
 
       
     </div>
@@ -433,9 +404,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Redis/" rel="tag"># Redis</a>
-          
-            <a href="/tags/环境配置/" rel="tag"># 环境配置</a>
+            <a href="/tags/Spring/" rel="tag"># Spring</a>
           
         </div>
       
@@ -444,6 +413,26 @@
       
       
 
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/23/Spring/容器启动过程（Bean的生命周期）/" rel="next" title="容器启动过程（Bean的生命周期）">
+                <i class="fa fa-chevron-left"></i> 容器启动过程（Bean的生命周期）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/23/Spring/Spring-目录/" rel="prev" title="Spring-目录">
+                Spring-目录 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
       
 
       
@@ -528,17 +517,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -553,7 +533,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -575,7 +555,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">1</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -636,22 +616,6 @@
       </section>
 
       
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、下载-msi-安装包"><span class="nav-number">1.</span> <span class="nav-text">1、下载 msi 安装包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、安装"><span class="nav-number">2.</span> <span class="nav-text">2、安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、将Redis注册成服务"><span class="nav-number">3.</span> <span class="nav-text">3、将Redis注册成服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、配置Redis密码"><span class="nav-number">4.</span> <span class="nav-text">4、配置Redis密码</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
-      
 
       
 
@@ -668,7 +632,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2018</span>
+  <span itemprop="copyrightYear">2019</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

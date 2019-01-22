@@ -78,7 +78,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="Spring," />
 
 
 
@@ -94,13 +94,32 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="fanchaoo">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="整个IoC有两个重要的部分：1. 让容器创建Bean；2. 让容器为Bean设置属性。 1. 概述1.1. IoCIoC的全称是Inverse of Control，就是“控制反转”的意思。控制反转这个概念其实包含两个层面的意思：“控制”是接口实现类的选择控制权；而“反转”是指这种控制权从调用类转移到了第三方容器的手中。 IOC的思想最核心的地方在于，资源交由第三方去集中管理，使得资源可配置，易管">
+<meta name="keywords" content="Spring">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IoC">
+<meta property="og:url" content="http://yoursite.com/2017/10/23/Spring/IoC/index.html">
 <meta property="og:site_name" content="fanchaoo">
+<meta property="og:description" content="整个IoC有两个重要的部分：1. 让容器创建Bean；2. 让容器为Bean设置属性。 1. 概述1.1. IoCIoC的全称是Inverse of Control，就是“控制反转”的意思。控制反转这个概念其实包含两个层面的意思：“控制”是接口实现类的选择控制权；而“反转”是指这种控制权从调用类转移到了第三方容器的手中。 IOC的思想最核心的地方在于，资源交由第三方去集中管理，使得资源可配置，易管">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-259d04d43d09537e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-2022eb06ba883a03.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-4c3322c622e1aac0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-adc2423259d8e852.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-5fabf0114cec5431.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-83196f79b76ac3f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-7b70c3dcc4c59580.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-1684b75c8099f76e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-f50da6f2a37d5459.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-5793803ba74780e1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-2761823629ab926f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-85a597c3b065e47a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-829c91f3077ebb28.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-22T14:43:35.758Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="fanchaoo">
+<meta name="twitter:title" content="IoC">
+<meta name="twitter:description" content="整个IoC有两个重要的部分：1. 让容器创建Bean；2. 让容器为Bean设置属性。 1. 概述1.1. IoCIoC的全称是Inverse of Control，就是“控制反转”的意思。控制反转这个概念其实包含两个层面的意思：“控制”是接口实现类的选择控制权；而“反转”是指这种控制权从调用类转移到了第三方容器的手中。 IOC的思想最核心的地方在于，资源交由第三方去集中管理，使得资源可配置，易管">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1754553-259d04d43d09537e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
 
@@ -129,13 +148,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/10/23/Spring/IoC/"/>
 
 
 
 
 
-  <title>fanchaoo</title>
+  <title>IoC | fanchaoo</title>
   
 
 
@@ -170,9 +189,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-   page-home 
- ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -275,9 +292,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -307,9 +324,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/23/Spring/IoC/" itemprop="url">IoC</a></h1>
+          <h1 class="post-title" itemprop="name headline">IoC</h1>
         
 
         <div class="post-meta">
@@ -381,9 +396,7 @@
       
 
       
-        
-          
-            <p>整个IoC有两个重要的部分：1. 让容器创建Bean；2. 让容器为Bean设置属性。</p>
+        <p>整个IoC有两个重要的部分：1. 让容器创建Bean；2. 让容器为Bean设置属性。</p>
 <h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h2><h3 id="1-1-IoC"><a href="#1-1-IoC" class="headerlink" title="1.1. IoC"></a>1.1. IoC</h3><p>IoC的全称是Inverse of Control，就是“控制反转”的意思。控制反转这个概念其实包含两个层面的意思：“控制”是接口实现类的选择控制权；而“反转”是指这种控制权从调用类转移到了第三方容器的手中。</p>
 <p>IOC的思想最核心的地方在于，资源交由第三方去集中管理，使得资源可配置，易管理。</p>
 <p>在Spring中，可以“使用配置信息（XML配置文件，注解）来描述需要实例化的类的信息，以及对象与对象之间的依赖关系”。而Spring容器具体做的事情，其实就是读取我们设定好的“配置信息”，然后通过“Java语言的反射机制”，帮我们去统一地“创建Bean，并建立Bean之间的依赖关系”。</p>
@@ -439,8 +452,6 @@
 <p><code>@Autowired</code>标注在属性上的时候，注入规则：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">if (有@Qualifier注解) &#123;</div><div class="line">    直接根据“名称”查找</div><div class="line">    if (找到) &#123;</div><div class="line">        直接注入，结束</div><div class="line">    &#125; else &#123;</div><div class="line">        if (@Autowired的required=true) &#123;</div><div class="line">            抛异常NoSuchBeanDefinitionException，结束</div><div class="line">        &#125; else &#123;</div><div class="line">            注入null，结束</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125; else &#123;</div><div class="line">    根据属性“类型”查找</div><div class="line">    if (只找到1个) &#123;</div><div class="line">        直接注入，结束</div><div class="line">    &#125; else if (找到多个) &#123;</div><div class="line">        if (如果多个bean中有一个被@Primary修饰) &#123;</div><div class="line">            直接注入该bean，结束</div><div class="line">        &#125; else &#123;</div><div class="line">            再根据bean名称进行查找，bean名称默认为属性名</div><div class="line">            if (找到) &#123;</div><div class="line">                直接注入，结束</div><div class="line">            &#125; else &#123;</div><div class="line">                if (找到多个该类型的) &#123;</div><div class="line">                    抛异常NoUniqueBeanDefinitionException，结束</div><div class="line">                &#125;</div><div class="line">                if (@Autowired的required=true) &#123;</div><div class="line">                    抛异常NoSuchBeanDefinitionException，结束</div><div class="line">                &#125; else &#123;</div><div class="line">                    注入null，结束</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125; else &#123;</div><div class="line">        if (@Autowired的required=true) &#123;</div><div class="line">            抛异常NoSuchBeanDefinitionException，结束</div><div class="line">        &#125; else &#123;</div><div class="line">            注入null，结束</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
-          
-        
       
     </div>
     
@@ -455,301 +466,36 @@
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/23/Spring/Spring-目录/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fanchaoo">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="fanchaoo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/23/Spring/Spring-目录/" itemprop="url">Spring-目录</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-23T21:52:51+08:00">
-                2017-10-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring/" itemprop="url" rel="index">
-                    <span itemprop="name">Spring</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
+            <a href="/tags/Spring/" rel="tag"># Spring</a>
           
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="1-容器启动过程（Bean的生命周期）"><a href="#1-容器启动过程（Bean的生命周期）" class="headerlink" title="1. 容器启动过程（Bean的生命周期）"></a>1. 容器启动过程（Bean的生命周期）</h1><h1 id="2-IoC"><a href="#2-IoC" class="headerlink" title="2. IoC"></a>2. IoC</h1><h1 id="3-一些拓展点"><a href="#3-一些拓展点" class="headerlink" title="3. 一些拓展点"></a>3. 一些拓展点</h1><h1 id="3-AOP"><a href="#3-AOP" class="headerlink" title="3. AOP"></a>3. AOP</h1><h1 id="4-声明式事务管理"><a href="#4-声明式事务管理" class="headerlink" title="4. 声明式事务管理"></a>4. 声明式事务管理</h1>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
       
 
       
       
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
       
 
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/23/Spring/声明式事务管理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fanchaoo">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="fanchaoo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/23/Spring/声明式事务管理/" itemprop="url">声明式事务管理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-23T21:52:51+08:00">
-                2017-10-23
-              </time>
+              <a href="/2017/10/23/Spring/Spring-目录/" rel="next" title="Spring-目录">
+                <i class="fa fa-chevron-left"></i> Spring-目录
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring/" itemprop="url" rel="index">
-                    <span itemprop="name">Spring</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <p>让Spring事务管理事务</p>
-<p>让Spring管理事务，只需要3步：</p>
-<p>1.在配置类上加上<code>@EnableTransactionManagement</code>注解；</p>
-<p>2.配置一个事务管理器的bean，通常是<code>PlatformTransactionManager</code>接口的实现类<code>DataSourceTransactionManager</code>；</p>
-<p>3.在业务方法上加上<code>@Transactional</code>注解。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -759,190 +505,11 @@
   </article>
 
 
-    
-      
 
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/23/Spring/容器启动过程（Bean的生命周期）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fanchaoo">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="fanchaoo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/23/Spring/容器启动过程（Bean的生命周期）/" itemprop="url">容器启动过程（Bean的生命周期）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-23T21:52:51+08:00">
-                2017-10-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring/" itemprop="url" rel="index">
-                    <span itemprop="name">Spring</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>今天说一下Spring容器的启动过程，这个启动过程中其实包含了单例Bean的生命周期。</p>
-<p>下面的main方法中的两行代码，其实就是在通过指定一个配置类，然后启动Spring容器。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public static void main(String[] args) throws InterruptedException &#123;</div><div class="line"></div><div class="line">		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(Config.class);</div><div class="line">		applicationContext.start();</div><div class="line">		</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>跟踪代码，最后会执行到<code>AbstractApplicationContext</code>的<code>refresh()</code>方法中：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public void refresh() throws BeansException, IllegalStateException &#123;</div><div class="line">	synchronized (this.startupShutdownMonitor) &#123;</div><div class="line">		// Prepare this context for refreshing.</div><div class="line">		prepareRefresh();</div><div class="line"></div><div class="line">		// Tell the subclass to refresh the internal bean factory.</div><div class="line">		ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();</div><div class="line"></div><div class="line">		// Prepare the bean factory for use in this context.</div><div class="line">		prepareBeanFactory(beanFactory);</div><div class="line"></div><div class="line">		try &#123;</div><div class="line">			// Allows post-processing of the bean factory in context subclasses.</div><div class="line">			postProcessBeanFactory(beanFactory);</div><div class="line"></div><div class="line">			// Invoke factory processors registered as beans in the context.</div><div class="line">			invokeBeanFactoryPostProcessors(beanFactory);</div><div class="line"></div><div class="line">			// Register bean processors that intercept bean creation.</div><div class="line">			registerBeanPostProcessors(beanFactory);</div><div class="line"></div><div class="line">			// Initialize message source for this context.</div><div class="line">			initMessageSource();</div><div class="line"></div><div class="line">			// Initialize event multicaster for this context.</div><div class="line">			initApplicationEventMulticaster();</div><div class="line"></div><div class="line">			// Initialize other special beans in specific context subclasses.</div><div class="line">			onRefresh();</div><div class="line"></div><div class="line">			// Check for listener beans and register them.</div><div class="line">			registerListeners();</div><div class="line"></div><div class="line">			// Instantiate all remaining (non-lazy-init) singletons.</div><div class="line">			finishBeanFactoryInitialization(beanFactory);</div><div class="line"></div><div class="line">			// Last step: publish corresponding event.</div><div class="line">			finishRefresh();</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		catch (BeansException ex) &#123;</div><div class="line">			if (logger.isWarnEnabled()) &#123;</div><div class="line">				logger.warn(&quot;Exception encountered during context initialization - &quot; +</div><div class="line">						&quot;cancelling refresh attempt: &quot; + ex);</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			// Destroy already created singletons to avoid dangling resources.</div><div class="line">			destroyBeans();</div><div class="line"></div><div class="line">			// Reset &apos;active&apos; flag.</div><div class="line">			cancelRefresh(ex);</div><div class="line"></div><div class="line">			// Propagate exception to caller.</div><div class="line">			throw ex;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		finally &#123;</div><div class="line">			// Reset common introspection caches in Spring&apos;s core, since we</div><div class="line">			// might not ever need metadata for singleton beans anymore...</div><div class="line">			resetCommonCaches();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>整个容器启动过程如下图：<img src="https://upload-images.jianshu.io/upload_images/1754553-c418cebd6e571d1d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Spring容器启动过程"></p>
-<h1 id="BeanDefinition和Bean"><a href="#BeanDefinition和Bean" class="headerlink" title="BeanDefinition和Bean"></a>BeanDefinition和Bean</h1><p>在Spring容器中，每一个Bean都会有一个对应的BeanDefinition。这个BeanDefinition，是通过各种解析之后，生成的关于Bean的定义信息。</p>
-<p>粗略地说，整个启动过程可以分为两个主要步骤：1.创建<code>BeanDefinition</code>；2.创建<code>Bean</code>。</p>
-<ol>
-<li>注册所有的Bean定义信息（standard initialization）。ApplicationContext在启动时，首先将解析各种配置信息（比如<bean>标签，@Bean注解，@Component注解等等），为每个需要创建的Bean，都生成一个BeanDefinition对象，并注册到DefaultListableBeanFactory的beanDefinitionMap属性中（通过BeanDefinitionRegistry的registerBeanDefinition方法）。</bean></li>
-<li>根据BeanDefinition创建Bean，并建立Bean和Bean之间的依赖关系，最终会将这些Bean放入DefaultListableBeanFactory的singletonObjects属性（继承自DefaultSingletonBeanRegistry）中，以供外层应用程序使用。</li>
-</ol>
-<h1 id="拓展点"><a href="#拓展点" class="headerlink" title="拓展点"></a>拓展点</h1><p>容器的启动会经过以下步骤：</p>
-<p>创建BeanDefinition –&gt; 创建BeanPostProcessor –&gt; 注册ApplicationListener –&gt; Bean实例化 –&gt; 为Bean设置属性 –&gt; 调用Bean的初始化方法。</p>
-<p>在容器的启动过程中，Spring提供了很多拓展点（BeanDefinition创建完成后，Bean的实例化前后，Bean的初始化前后等等），可以让用户自定义一些操作，然后Spring会在启动过程中的特定位置，执行用户自定义的操作。</p>
-<p>这些拓展点包括：</p>
-<h2 id="BeanDefinitionRegistryPostProcessor"><a href="#BeanDefinitionRegistryPostProcessor" class="headerlink" title="BeanDefinitionRegistryPostProcessor"></a>BeanDefinitionRegistryPostProcessor</h2><p>这个接口是<code>BeanFactoryPostProcessor</code>的子接口。</p>
-<p>在BeanDefinition解析并创建完成后，会执行这个接口的实现类的<code>postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry)</code>方法。可以通过这个接口，为容器增加一些自己需要的BeanDefinition。</p>
-<h2 id="BeanFactoryPostProcessor"><a href="#BeanFactoryPostProcessor" class="headerlink" title="BeanFactoryPostProcessor"></a>BeanFactoryPostProcessor</h2><p>同样是在BeanDefinition解析完并创建完成后，会执行这个接口的实现类的<code>postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)</code>方法。</p>
-<h2 id="InstantiationAwareBeanPostProcessor"><a href="#InstantiationAwareBeanPostProcessor" class="headerlink" title="InstantiationAwareBeanPostProcessor"></a>InstantiationAwareBeanPostProcessor</h2><p>这个接口是<code>BeanPostProcessor</code>的子接口。</p>
-<p>在Bean的实例化（调用构造器）前，会执行这个接口的<code>postProcessBeforeInstantiation(Class&lt;?&gt; beanClass, String beanName)</code>方法；在Bean的实例化之后，会先后调用该接口的<code>boolean postProcessAfterInstantiation(Object bean, String beanName)</code>方法和<code>PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName)</code>方法。</p>
-<h2 id="BeanPostProcessor"><a href="#BeanPostProcessor" class="headerlink" title="BeanPostProcessor"></a>BeanPostProcessor</h2><p>在Bean的初始化前，会执行该接口的<code>Object postProcessBeforeInitialization(Object bean, String beanName)</code>方法；在Bean的初始化之后，会执行该接口的<code>Object postProcessAfterInitialization(Object bean, String beanName)</code>方法。</p>
-<h2 id="ApplicationListener"><a href="#ApplicationListener" class="headerlink" title="ApplicationListener"></a>ApplicationListener</h2><p>用户可以实现该接口的<code>void onApplicationEvent(E event)</code>方法，监听某个事件。之后在该时间发生时，容器会通过<code>ApplicationEventMulticaster</code>调用该监听器的onApplicationEvent方法。</p>
-<p>需要注意的是，这些拓展接口的实现类，也都必须作为Bean，被注册到容器中才可以生效。</p>
-<h1 id="几个重要的属性"><a href="#几个重要的属性" class="headerlink" title="几个重要的属性"></a>几个重要的属性</h1><p>所谓的Spring容器，往简单了说其实就是个Map，这个Map的键是Bean的名称，值是这个Bean的实例。</p>
-<p>在Spring中，有几个比较重要的属性，如下：</p>
-<h2 id="beanFactory"><a href="#beanFactory" class="headerlink" title="beanFactory"></a>beanFactory</h2><p>该属性在<code>GenericApplicationContext</code>中。Bean工厂，顾名思义，这个对象存储了Spring容器中所有的Bean定义信息和Bean实例。</p>
-<p>完整定义为<code>private final DefaultListableBeanFactory beanFactory;</code>。</p>
-<p>DefaultListableBeanFactory的继承体系如下图所示：<img src="https://upload-images.jianshu.io/upload_images/1754553-36f5e89b0262e4db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="DefaultListableBeanFactory继承体系"></p>
-<h2 id="beanDefinitionMap"><a href="#beanDefinitionMap" class="headerlink" title="beanDefinitionMap"></a>beanDefinitionMap</h2><p>该属性在<code>DefaultListableBeanFactory</code>中，类型为Map，键为Bean名称，值为BeanDefinition对象。</p>
-<p>完整定义为<code>private final Map&lt;String, BeanDefinition&gt; beanDefinitionMap = new ConcurrentHashMap&lt;&gt;(256);</code>。</p>
-<h2 id="beanDefinitionNames"><a href="#beanDefinitionNames" class="headerlink" title="beanDefinitionNames"></a>beanDefinitionNames</h2><p>该属性在在<code>DefaultListableBeanFactory</code>中，类型为List，存储了容器中所有的Bean的名称。</p>
-<p>完整定义为<code>private volatile List&lt;String&gt; beanDefinitionNames = new ArrayList&lt;&gt;(256);</code>。</p>
-<h2 id="singletonObjects"><a href="#singletonObjects" class="headerlink" title="singletonObjects"></a>singletonObjects</h2><p>该属性在<code>DefaultSingletonBeanRegistry</code>中，类型为Map，存储了容器中所有的单例Bean实例，键为Bean名称，值为单例Bean实例。</p>
-<p>DefaultListableBeanFactory继承了DefaultSingletonBeanRegistry，所以拥有这个属性。</p>
-<p>完整定义为<code>private final Map&lt;String, Object&gt; singletonObjects = new ConcurrentHashMap&lt;&gt;(256);</code>。</p>
-<h2 id="beanPostProcessors"><a href="#beanPostProcessors" class="headerlink" title="beanPostProcessors"></a>beanPostProcessors</h2><p>该属性在<code>AbstractBeanFactory</code>中，类型为List，存储了容器中所有的BeanPostProcessor。</p>
-<p>DefaultListableBeanFactory继承了AbstractBeanFactory，所以拥有这个属性。</p>
-<p>完整定义为<code>private final List&lt;BeanPostProcessor&gt; beanPostProcessors = new CopyOnWriteArrayList&lt;&gt;();</code>。</p>
-
-          
-        
+    <div class="post-spread">
       
     </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
   </div>
-  
-  
-  
-  </article>
-
-
-    
-  </section>
-
-  
 
 
           </div>
@@ -950,6 +517,46 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  <div onclick="showGitment()" id="gitment_title" class="gitment_title">显示 Gitment 评论</div>
+  <div id="container" style="display:none"></div>
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script>
+  const myTheme = {
+    render(state, instance) {
+      const container = document.createElement('div');
+      container.lang = "en-US";
+      container.className = 'gitment-container gitment-root-container';
+      container.appendChild(instance.renderHeader(state, instance));
+      container.appendChild(instance.renderEditor(state, instance));
+      container.appendChild(instance.renderComments(state, instance));
+      container.appendChild(instance.renderFooter(state, instance));
+      return container;
+    }
+  }
+  function showGitment() {
+    $("#gitment_title").attr("style", "display:none");
+    $("#container").attr("style", "").addClass("gitment_container");
+    var gitment = new Gitment({
+      id: '1508766771300',
+      theme: myTheme,
+      owner: 'fanchaoo',
+      repo: 'blog-comment',
+      oauth: {
+        client_id: '58efaaa5905eec99646f',
+        client_secret: '2d2e42ab949f1b204e58cf0272a8a16c1cdb7431'
+      }
+    });
+    gitment.render('container');
+  }
+  </script>
+
+  
+    
+  </div>
+
 
         </div>
         
@@ -970,8 +577,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -1068,6 +684,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-概述"><span class="nav-number">1.</span> <span class="nav-text">1. 概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-IoC"><span class="nav-number">1.1.</span> <span class="nav-text">1.1. IoC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-反射"><span class="nav-number">1.2.</span> <span class="nav-text">1.2. 反射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-Resource和ResourceLoader"><span class="nav-number">1.3.</span> <span class="nav-text">1.3. Resource和ResourceLoader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-BeanFactory，ApplicationContext，WebApplicationContext"><span class="nav-number">1.4.</span> <span class="nav-text">1.4. BeanFactory，ApplicationContext，WebApplicationContext</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-Bean的生命周期"><span class="nav-number">1.5.</span> <span class="nav-text">1.5. Bean的生命周期</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-使用方式"><span class="nav-number">2.</span> <span class="nav-text">2. 使用方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#让容器创建Bean"><span class="nav-number">2.1.</span> <span class="nav-text">让容器创建Bean</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#带条件的创建"><span class="nav-number">2.2.</span> <span class="nav-text">带条件的创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#让容器为Bean设置属性"><span class="nav-number">2.3.</span> <span class="nav-text">让容器为Bean设置属性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Value"><span class="nav-number">2.3.1.</span> <span class="nav-text">@Value</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Autowired"><span class="nav-number">2.3.2.</span> <span class="nav-text">@Autowired</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -1181,10 +813,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
 
-  
+
 
   
 

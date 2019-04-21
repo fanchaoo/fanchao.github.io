@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="SpringMVC," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Servlet的service方法，是整个HTTP请求处理流程的一个入口。在某个Controller方法上打上断点，可以观察到如下调用栈：  由于DispatcherServlet继承自HttpServlet，也就间接实现了Servlet接口。DispatcherServlet的类图如下：  所以请求到来时，首先会进入DispatcherServlet的父类HttpServlet的service方">
+<meta name="keywords" content="SpringMVC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个HTTP请求是如何从Tomcat流转到SpringMVC的.md">
+<meta property="og:url" content="http://yoursite.com/2019/02/21/SpringMVC/一个HTTP请求是如何从Tomcat流转到SpringMVC的/index.html">
+<meta property="og:site_name" content="fanchaoo">
+<meta property="og:description" content="Servlet的service方法，是整个HTTP请求处理流程的一个入口。在某个Controller方法上打上断点，可以观察到如下调用栈：  由于DispatcherServlet继承自HttpServlet，也就间接实现了Servlet接口。DispatcherServlet的类图如下：  所以请求到来时，首先会进入DispatcherServlet的父类HttpServlet的service方">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-0c28bd83fe96ecb8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-07377b614e6d7193.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-02-21T02:10:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一个HTTP请求是如何从Tomcat流转到SpringMVC的.md">
+<meta name="twitter:description" content="Servlet的service方法，是整个HTTP请求处理流程的一个入口。在某个Controller方法上打上断点，可以观察到如下调用栈：  由于DispatcherServlet继承自HttpServlet，也就间接实现了Servlet接口。DispatcherServlet的类图如下：  所以请求到来时，首先会进入DispatcherServlet的父类HttpServlet的service方">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1754553-0c28bd83fe96ecb8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/21/SpringMVC/一个HTTP请求是如何从Tomcat流转到SpringMVC的/"/>
+
+
+
+
+
+  <title>一个HTTP请求是如何从Tomcat流转到SpringMVC的.md | fanchaoo</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?e82dfc2f4993e27da0bec06ea192ae31";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">fanchaoo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/21/SpringMVC/一个HTTP请求是如何从Tomcat流转到SpringMVC的/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanchaoo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanchaoo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">一个HTTP请求是如何从Tomcat流转到SpringMVC的.md</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-21T10:10:02+08:00">
+                2019-02-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringMVC/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringMVC</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>Servlet的service方法</strong>，是整个HTTP请求处理流程的一个入口。在某个Controller方法上打上断点，可以观察到如下调用栈：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1754553-0c28bd83fe96ecb8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>由于DispatcherServlet继承自HttpServlet，也就间接实现了Servlet接口。DispatcherServlet的类图如下：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1754553-07377b614e6d7193.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>所以请求到来时，首先会进入DispatcherServlet的父类HttpServlet的service方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest req, ServletResponse res)</span></span></div><div class="line"><span class="function">    <span class="keyword">throws</span> ServletException, IOException </span>&#123;</div><div class="line"></div><div class="line">    HttpServletRequest  request;</div><div class="line">    HttpServletResponse response;</div><div class="line"></div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        request = (HttpServletRequest) req;</div><div class="line">        response = (HttpServletResponse) res;</div><div class="line">    &#125; <span class="keyword">catch</span> (ClassCastException e) &#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ServletException(<span class="string">"non-HTTP request or response"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// 只是做下类型强转，然后调用另外一个方法</span></div><div class="line">    service(request, response);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在上面方法的末尾，会调用另外一个与HTTP协议相关的service方法，这个方法的定义为<code>protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException</code>。FrameworkServlet实现了这个方法，所以下一步来到FrameworkServlet的协议相关的service方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></div><div class="line"><span class="function">		<span class="keyword">throws</span> ServletException, IOException </span>&#123;</div><div class="line"></div><div class="line">	HttpMethod httpMethod = HttpMethod.resolve(request.getMethod());</div><div class="line">	<span class="keyword">if</span> (httpMethod == HttpMethod.PATCH || httpMethod == <span class="keyword">null</span>) &#123;</div><div class="line">		processRequest(request, response);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">else</span> &#123;</div><div class="line">		<span class="keyword">super</span>.service(request, response);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在这段代码最后，又会委托给父类HttpServlet的协议相关的service方法，借用父类对请求方法（GET，POST等等）的判断逻辑，去调用相应的doGet或doPost方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span></span></div><div class="line"><span class="function">    <span class="keyword">throws</span> ServletException, IOException </span>&#123;</div><div class="line"></div><div class="line">    String method = req.getMethod();</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (method.equals(METHOD_GET)) &#123;</div><div class="line">        <span class="keyword">long</span> lastModified = getLastModified(req);</div><div class="line">        <span class="keyword">if</span> (lastModified == -<span class="number">1</span>) &#123;</div><div class="line">            <span class="comment">// servlet doesn't support if-modified-since, no reason</span></div><div class="line">            <span class="comment">// to go through further expensive logic</span></div><div class="line">            doGet(req, resp);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">long</span> ifModifiedSince;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                ifModifiedSince = req.getDateHeader(HEADER_IFMODSINCE);</div><div class="line">            &#125; <span class="keyword">catch</span> (IllegalArgumentException iae) &#123;</div><div class="line">                <span class="comment">// Invalid date header - proceed as if none was set</span></div><div class="line">                ifModifiedSince = -<span class="number">1</span>;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span> (ifModifiedSince &lt; (lastModified / <span class="number">1000</span> * <span class="number">1000</span>)) &#123;</div><div class="line">                <span class="comment">// If the servlet mod time is later, call doGet()</span></div><div class="line">                <span class="comment">// Round down to the nearest second for a proper compare</span></div><div class="line">                <span class="comment">// A ifModifiedSince of -1 will always be less</span></div><div class="line">                maybeSetLastModified(resp, lastModified);</div><div class="line">                doGet(req, resp);</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                resp.setStatus(HttpServletResponse.SC_NOT_MODIFIED);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_HEAD)) &#123;</div><div class="line">        <span class="keyword">long</span> lastModified = getLastModified(req);</div><div class="line">        maybeSetLastModified(resp, lastModified);</div><div class="line">        doHead(req, resp);</div><div class="line"></div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_POST)) &#123;</div><div class="line">        doPost(req, resp);</div><div class="line"></div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_PUT)) &#123;</div><div class="line">        doPut(req, resp);</div><div class="line"></div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_DELETE)) &#123;</div><div class="line">        doDelete(req, resp);</div><div class="line"></div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_OPTIONS)) &#123;</div><div class="line">        doOptions(req,resp);</div><div class="line"></div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_TRACE)) &#123;</div><div class="line">        doTrace(req,resp);</div><div class="line"></div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="comment">//</span></div><div class="line">        <span class="comment">// Note that this means NO servlet supports whatever</span></div><div class="line">        <span class="comment">// method was requested, anywhere on this server.</span></div><div class="line">        <span class="comment">//</span></div><div class="line"></div><div class="line">        String errMsg = lStrings.getString(<span class="string">"http.method_not_implemented"</span>);</div><div class="line">        Object[] errArgs = <span class="keyword">new</span> Object[<span class="number">1</span>];</div><div class="line">        errArgs[<span class="number">0</span>] = method;</div><div class="line">        errMsg = MessageFormat.format(errMsg, errArgs);</div><div class="line"></div><div class="line">        resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, errMsg);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>由于子类FrameworkServlet实现了相应的doGet，doPost等方法，所以接着来到了FrameworkServlet的doGet方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></div><div class="line"><span class="function">		<span class="keyword">throws</span> ServletException, IOException </span>&#123;</div><div class="line"></div><div class="line">	processRequest(request, response);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">doPost</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></div><div class="line"><span class="function">		<span class="keyword">throws</span> ServletException, IOException </span>&#123;</div><div class="line"></div><div class="line">	processRequest(request, response);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>观察上面代码可以发现，FrameworkServlet的doGet和doPost等方法都是final的，也就是不允许子类再去重写。在这些方法的内部，都统一去调用了processRequest这个方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">processRequest</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></div><div class="line"><span class="function">		<span class="keyword">throws</span> ServletException, IOException </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">long</span> startTime = System.currentTimeMillis();</div><div class="line">	Throwable failureCause = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">	LocaleContext previousLocaleContext = LocaleContextHolder.getLocaleContext();</div><div class="line">	LocaleContext localeContext = buildLocaleContext(request);</div><div class="line"></div><div class="line">	RequestAttributes previousAttributes = RequestContextHolder.getRequestAttributes();</div><div class="line">	ServletRequestAttributes requestAttributes = buildRequestAttributes(request, response, previousAttributes);</div><div class="line"></div><div class="line">	WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);</div><div class="line">	asyncManager.registerCallableInterceptor(FrameworkServlet.class.getName(), <span class="keyword">new</span> RequestBindingInterceptor());</div><div class="line"></div><div class="line">	initContextHolders(request, localeContext, requestAttributes);</div><div class="line"></div><div class="line">	<span class="keyword">try</span> &#123;</div><div class="line">		doService(request, response);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">catch</span> (ServletException | IOException ex) &#123;</div><div class="line">		failureCause = ex;</div><div class="line">		<span class="keyword">throw</span> ex;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">catch</span> (Throwable ex) &#123;</div><div class="line">		failureCause = ex;</div><div class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> NestedServletException(<span class="string">"Request processing failed"</span>, ex);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">finally</span> &#123;</div><div class="line">		resetContextHolders(request, previousLocaleContext, previousAttributes);</div><div class="line">		<span class="keyword">if</span> (requestAttributes != <span class="keyword">null</span>) &#123;</div><div class="line">			requestAttributes.requestCompleted();</div><div class="line">		&#125;</div><div class="line">		logResult(request, response, failureCause, asyncManager);</div><div class="line">		publishRequestHandledEvent(request, response, startTime, failureCause);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个processRequest方法也是final的，而在这个方法内部，调用了一个doService方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">doService</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> <span class="keyword">throws</span> Exception</span>;</div></pre></td></tr></table></figure>
+<p>可以看到，这个doService方法是抽象的，所以强制了子类必须重写该方法。</p>
+<p>这里其实用到了一种叫做“模版方法”的设计模式：在父类中用final方法规定好具体流程，流程中的某个步骤，通过抽象方法交给子类去实现。</p>
+<p>DispatcherServlet重写了doService方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">	protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception &#123;</div><div class="line">		logRequest(request);</div><div class="line"></div><div class="line">		// Keep a snapshot of the request attributes in case of an include,</div><div class="line">		// to be able to restore the original attributes after the include.</div><div class="line">		Map&lt;String, Object&gt; attributesSnapshot = null;</div><div class="line">		if (WebUtils.isIncludeRequest(request)) &#123;</div><div class="line">			attributesSnapshot = new HashMap&lt;&gt;();</div><div class="line">			Enumeration&lt;?&gt; attrNames = request.getAttributeNames();</div><div class="line">			while (attrNames.hasMoreElements()) &#123;</div><div class="line">				String attrName = (String) attrNames.nextElement();</div><div class="line">				if (this.cleanupAfterInclude || attrName.startsWith(DEFAULT_STRATEGIES_PREFIX)) &#123;</div><div class="line">					attributesSnapshot.put(attrName, request.getAttribute(attrName));</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		// Make framework objects available to handlers and view objects.</div><div class="line">		request.setAttribute(WEB_APPLICATION_CONTEXT_ATTRIBUTE, getWebApplicationContext());</div><div class="line">		request.setAttribute(LOCALE_RESOLVER_ATTRIBUTE, this.localeResolver);</div><div class="line">		request.setAttribute(THEME_RESOLVER_ATTRIBUTE, this.themeResolver);</div><div class="line">		request.setAttribute(THEME_SOURCE_ATTRIBUTE, getThemeSource());</div><div class="line"></div><div class="line">		if (this.flashMapManager != null) &#123;</div><div class="line">			FlashMap inputFlashMap = this.flashMapManager.retrieveAndUpdate(request, response);</div><div class="line">			if (inputFlashMap != null) &#123;</div><div class="line">				request.setAttribute(INPUT_FLASH_MAP_ATTRIBUTE, Collections.unmodifiableMap(inputFlashMap));</div><div class="line">			&#125;</div><div class="line">			request.setAttribute(OUTPUT_FLASH_MAP_ATTRIBUTE, new FlashMap());</div><div class="line">			request.setAttribute(FLASH_MAP_MANAGER_ATTRIBUTE, this.flashMapManager);</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		try &#123;</div><div class="line">			doDispatch(request, response);</div><div class="line">		&#125;</div><div class="line">		finally &#123;</div><div class="line">			if (!WebAsyncUtils.getAsyncManager(request).isConcurrentHandlingStarted()) &#123;</div><div class="line">				// Restore the original attribute snapshot, in case of an include.</div><div class="line">				if (attributesSnapshot != null) &#123;</div><div class="line">					restoreAttributesAfterInclude(request, attributesSnapshot);</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>在DispatcherServlet重写的doService()方法中，调用了另外一个doDispatch方法，而这个doDispatch方法便是整个处理的核心流程了。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SpringMVC/" rel="tag"># SpringMVC</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/22/Spring/容器启动过程（Bean的生命周期）/" rel="next" title="容器启动过程（Bean的生命周期）">
+                <i class="fa fa-chevron-left"></i> 容器启动过程（Bean的生命周期）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  <div onclick="showGitment()" id="gitment_title" class="gitment_title">显示 Gitment 评论</div>
+  <div id="container" style="display:none"></div>
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script>
+  const myTheme = {
+    render(state, instance) {
+      const container = document.createElement('div');
+      container.lang = "en-US";
+      container.className = 'gitment-container gitment-root-container';
+      container.appendChild(instance.renderHeader(state, instance));
+      container.appendChild(instance.renderEditor(state, instance));
+      container.appendChild(instance.renderComments(state, instance));
+      container.appendChild(instance.renderFooter(state, instance));
+      return container;
+    }
+  }
+  function showGitment() {
+    $("#gitment_title").attr("style", "display:none");
+    $("#container").attr("style", "").addClass("gitment_container");
+    var gitment = new Gitment({
+      id: '1550715002000',
+      theme: myTheme,
+      owner: 'fanchaoo',
+      repo: 'blog-comment',
+      oauth: {
+        client_id: '58efaaa5905eec99646f',
+        client_secret: '2d2e42ab949f1b204e58cf0272a8a16c1cdb7431'
+      }
+    });
+    gitment.render('container');
+  }
+  </script>
+
+  
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fanchaoo" />
+          <p class="site-author-name" itemprop="name">fanchaoo</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/fanchaoo" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      微博
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://douban.com/people/fc100" target="_blank" title="豆瓣">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                    
+                      豆瓣
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://music.163.com/#/user/home?id=19243474" target="_blank" title="网易云">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                    
+                      网易云
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fanchaoo</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

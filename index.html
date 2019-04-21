@@ -290,7 +290,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/23/Spring/IoC/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/21/SpringMVC/一个HTTP请求是如何从Tomcat流转到SpringMVC的/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="fanchaoo">
@@ -309,7 +309,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/10/23/Spring/IoC/" itemprop="url">IoC</a></h1>
+                <a class="post-title-link" href="/2019/02/21/SpringMVC/一个HTTP请求是如何从Tomcat流转到SpringMVC的/" itemprop="url">一个HTTP请求是如何从Tomcat流转到SpringMVC的.md</a></h1>
         
 
         <div class="post-meta">
@@ -321,8 +321,350 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-23T21:52:51+08:00">
-                2017-10-23
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-21T10:10:02+08:00">
+                2019-02-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringMVC/" itemprop="url" rel="index">
+                    <span itemprop="name">SpringMVC</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>Servlet的service方法</strong>，是整个HTTP请求处理流程的一个入口。在某个Controller方法上打上断点，可以观察到如下调用栈：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1754553-0c28bd83fe96ecb8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>由于DispatcherServlet继承自HttpServlet，也就间接实现了Servlet接口。DispatcherServlet的类图如下：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/1754553-07377b614e6d7193.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>所以请求到来时，首先会进入DispatcherServlet的父类HttpServlet的service方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest req, ServletResponse res)</span></span></div><div class="line"><span class="function">    <span class="keyword">throws</span> ServletException, IOException </span>&#123;</div><div class="line"></div><div class="line">    HttpServletRequest  request;</div><div class="line">    HttpServletResponse response;</div><div class="line"></div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        request = (HttpServletRequest) req;</div><div class="line">        response = (HttpServletResponse) res;</div><div class="line">    &#125; <span class="keyword">catch</span> (ClassCastException e) &#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ServletException(<span class="string">"non-HTTP request or response"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// 只是做下类型强转，然后调用另外一个方法</span></div><div class="line">    service(request, response);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在上面方法的末尾，会调用另外一个与HTTP协议相关的service方法，这个方法的定义为<code>protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException</code>。FrameworkServlet实现了这个方法，所以下一步来到FrameworkServlet的协议相关的service方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></div><div class="line"><span class="function">		<span class="keyword">throws</span> ServletException, IOException </span>&#123;</div><div class="line"></div><div class="line">	HttpMethod httpMethod = HttpMethod.resolve(request.getMethod());</div><div class="line">	<span class="keyword">if</span> (httpMethod == HttpMethod.PATCH || httpMethod == <span class="keyword">null</span>) &#123;</div><div class="line">		processRequest(request, response);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">else</span> &#123;</div><div class="line">		<span class="keyword">super</span>.service(request, response);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在这段代码最后，又会委托给父类HttpServlet的协议相关的service方法，借用父类对请求方法（GET，POST等等）的判断逻辑，去调用相应的doGet或doPost方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span></span></div><div class="line"><span class="function">    <span class="keyword">throws</span> ServletException, IOException </span>&#123;</div><div class="line"></div><div class="line">    String method = req.getMethod();</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (method.equals(METHOD_GET)) &#123;</div><div class="line">        <span class="keyword">long</span> lastModified = getLastModified(req);</div><div class="line">        <span class="keyword">if</span> (lastModified == -<span class="number">1</span>) &#123;</div><div class="line">            <span class="comment">// servlet doesn't support if-modified-since, no reason</span></div><div class="line">            <span class="comment">// to go through further expensive logic</span></div><div class="line">            doGet(req, resp);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">long</span> ifModifiedSince;</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                ifModifiedSince = req.getDateHeader(HEADER_IFMODSINCE);</div><div class="line">            &#125; <span class="keyword">catch</span> (IllegalArgumentException iae) &#123;</div><div class="line">                <span class="comment">// Invalid date header - proceed as if none was set</span></div><div class="line">                ifModifiedSince = -<span class="number">1</span>;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span> (ifModifiedSince &lt; (lastModified / <span class="number">1000</span> * <span class="number">1000</span>)) &#123;</div><div class="line">                <span class="comment">// If the servlet mod time is later, call doGet()</span></div><div class="line">                <span class="comment">// Round down to the nearest second for a proper compare</span></div><div class="line">                <span class="comment">// A ifModifiedSince of -1 will always be less</span></div><div class="line">                maybeSetLastModified(resp, lastModified);</div><div class="line">                doGet(req, resp);</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                resp.setStatus(HttpServletResponse.SC_NOT_MODIFIED);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_HEAD)) &#123;</div><div class="line">        <span class="keyword">long</span> lastModified = getLastModified(req);</div><div class="line">        maybeSetLastModified(resp, lastModified);</div><div class="line">        doHead(req, resp);</div><div class="line"></div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_POST)) &#123;</div><div class="line">        doPost(req, resp);</div><div class="line"></div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_PUT)) &#123;</div><div class="line">        doPut(req, resp);</div><div class="line"></div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_DELETE)) &#123;</div><div class="line">        doDelete(req, resp);</div><div class="line"></div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_OPTIONS)) &#123;</div><div class="line">        doOptions(req,resp);</div><div class="line"></div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(METHOD_TRACE)) &#123;</div><div class="line">        doTrace(req,resp);</div><div class="line"></div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="comment">//</span></div><div class="line">        <span class="comment">// Note that this means NO servlet supports whatever</span></div><div class="line">        <span class="comment">// method was requested, anywhere on this server.</span></div><div class="line">        <span class="comment">//</span></div><div class="line"></div><div class="line">        String errMsg = lStrings.getString(<span class="string">"http.method_not_implemented"</span>);</div><div class="line">        Object[] errArgs = <span class="keyword">new</span> Object[<span class="number">1</span>];</div><div class="line">        errArgs[<span class="number">0</span>] = method;</div><div class="line">        errMsg = MessageFormat.format(errMsg, errArgs);</div><div class="line"></div><div class="line">        resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED, errMsg);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>由于子类FrameworkServlet实现了相应的doGet，doPost等方法，所以接着来到了FrameworkServlet的doGet方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></div><div class="line"><span class="function">		<span class="keyword">throws</span> ServletException, IOException </span>&#123;</div><div class="line"></div><div class="line">	processRequest(request, response);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">doPost</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></div><div class="line"><span class="function">		<span class="keyword">throws</span> ServletException, IOException </span>&#123;</div><div class="line"></div><div class="line">	processRequest(request, response);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>观察上面代码可以发现，FrameworkServlet的doGet和doPost等方法都是final的，也就是不允许子类再去重写。在这些方法的内部，都统一去调用了processRequest这个方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">processRequest</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></div><div class="line"><span class="function">		<span class="keyword">throws</span> ServletException, IOException </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">long</span> startTime = System.currentTimeMillis();</div><div class="line">	Throwable failureCause = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">	LocaleContext previousLocaleContext = LocaleContextHolder.getLocaleContext();</div><div class="line">	LocaleContext localeContext = buildLocaleContext(request);</div><div class="line"></div><div class="line">	RequestAttributes previousAttributes = RequestContextHolder.getRequestAttributes();</div><div class="line">	ServletRequestAttributes requestAttributes = buildRequestAttributes(request, response, previousAttributes);</div><div class="line"></div><div class="line">	WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);</div><div class="line">	asyncManager.registerCallableInterceptor(FrameworkServlet.class.getName(), <span class="keyword">new</span> RequestBindingInterceptor());</div><div class="line"></div><div class="line">	initContextHolders(request, localeContext, requestAttributes);</div><div class="line"></div><div class="line">	<span class="keyword">try</span> &#123;</div><div class="line">		doService(request, response);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">catch</span> (ServletException | IOException ex) &#123;</div><div class="line">		failureCause = ex;</div><div class="line">		<span class="keyword">throw</span> ex;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">catch</span> (Throwable ex) &#123;</div><div class="line">		failureCause = ex;</div><div class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> NestedServletException(<span class="string">"Request processing failed"</span>, ex);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">finally</span> &#123;</div><div class="line">		resetContextHolders(request, previousLocaleContext, previousAttributes);</div><div class="line">		<span class="keyword">if</span> (requestAttributes != <span class="keyword">null</span>) &#123;</div><div class="line">			requestAttributes.requestCompleted();</div><div class="line">		&#125;</div><div class="line">		logResult(request, response, failureCause, asyncManager);</div><div class="line">		publishRequestHandledEvent(request, response, startTime, failureCause);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个processRequest方法也是final的，而在这个方法内部，调用了一个doService方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">doService</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> <span class="keyword">throws</span> Exception</span>;</div></pre></td></tr></table></figure>
+<p>可以看到，这个doService方法是抽象的，所以强制了子类必须重写该方法。</p>
+<p>这里其实用到了一种叫做“模版方法”的设计模式：在父类中用final方法规定好具体流程，流程中的某个步骤，通过抽象方法交给子类去实现。</p>
+<p>DispatcherServlet重写了doService方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">	protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception &#123;</div><div class="line">		logRequest(request);</div><div class="line"></div><div class="line">		// Keep a snapshot of the request attributes in case of an include,</div><div class="line">		// to be able to restore the original attributes after the include.</div><div class="line">		Map&lt;String, Object&gt; attributesSnapshot = null;</div><div class="line">		if (WebUtils.isIncludeRequest(request)) &#123;</div><div class="line">			attributesSnapshot = new HashMap&lt;&gt;();</div><div class="line">			Enumeration&lt;?&gt; attrNames = request.getAttributeNames();</div><div class="line">			while (attrNames.hasMoreElements()) &#123;</div><div class="line">				String attrName = (String) attrNames.nextElement();</div><div class="line">				if (this.cleanupAfterInclude || attrName.startsWith(DEFAULT_STRATEGIES_PREFIX)) &#123;</div><div class="line">					attributesSnapshot.put(attrName, request.getAttribute(attrName));</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		// Make framework objects available to handlers and view objects.</div><div class="line">		request.setAttribute(WEB_APPLICATION_CONTEXT_ATTRIBUTE, getWebApplicationContext());</div><div class="line">		request.setAttribute(LOCALE_RESOLVER_ATTRIBUTE, this.localeResolver);</div><div class="line">		request.setAttribute(THEME_RESOLVER_ATTRIBUTE, this.themeResolver);</div><div class="line">		request.setAttribute(THEME_SOURCE_ATTRIBUTE, getThemeSource());</div><div class="line"></div><div class="line">		if (this.flashMapManager != null) &#123;</div><div class="line">			FlashMap inputFlashMap = this.flashMapManager.retrieveAndUpdate(request, response);</div><div class="line">			if (inputFlashMap != null) &#123;</div><div class="line">				request.setAttribute(INPUT_FLASH_MAP_ATTRIBUTE, Collections.unmodifiableMap(inputFlashMap));</div><div class="line">			&#125;</div><div class="line">			request.setAttribute(OUTPUT_FLASH_MAP_ATTRIBUTE, new FlashMap());</div><div class="line">			request.setAttribute(FLASH_MAP_MANAGER_ATTRIBUTE, this.flashMapManager);</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		try &#123;</div><div class="line">			doDispatch(request, response);</div><div class="line">		&#125;</div><div class="line">		finally &#123;</div><div class="line">			if (!WebAsyncUtils.getAsyncManager(request).isConcurrentHandlingStarted()) &#123;</div><div class="line">				// Restore the original attribute snapshot, in case of an include.</div><div class="line">				if (attributesSnapshot != null) &#123;</div><div class="line">					restoreAttributesAfterInclude(request, attributesSnapshot);</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>在DispatcherServlet重写的doService()方法中，调用了另外一个doDispatch方法，而这个doDispatch方法便是整个处理的核心流程了。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/22/Spring/容器启动过程（Bean的生命周期）/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanchaoo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanchaoo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/22/Spring/容器启动过程（Bean的生命周期）/" itemprop="url">容器启动过程（Bean的生命周期）</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-22T23:22:28+08:00">
+                2019-01-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring/" itemprop="url" rel="index">
+                    <span itemprop="name">Spring</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>今天说一下Spring容器的启动过程，这个启动过程中其实包含了单例Bean的生命周期。</p>
+<p>下面的main方法中的两行代码，其实就是在通过指定一个配置类，然后启动Spring容器。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line"></div><div class="line">		AnnotationConfigApplicationContext applicationContext = <span class="keyword">new</span> AnnotationConfigApplicationContext(Config.class);</div><div class="line">		applicationContext.start();</div><div class="line">		</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>跟踪代码，最后会执行到<code>AbstractApplicationContext</code>的<code>refresh()</code>方法中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">refresh</span><span class="params">()</span> <span class="keyword">throws</span> BeansException, IllegalStateException </span>&#123;</div><div class="line">	<span class="keyword">synchronized</span> (<span class="keyword">this</span>.startupShutdownMonitor) &#123;</div><div class="line">		<span class="comment">// Prepare this context for refreshing.</span></div><div class="line">		prepareRefresh();</div><div class="line"></div><div class="line">		<span class="comment">// Tell the subclass to refresh the internal bean factory.</span></div><div class="line">		ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();</div><div class="line"></div><div class="line">		<span class="comment">// Prepare the bean factory for use in this context.</span></div><div class="line">		prepareBeanFactory(beanFactory);</div><div class="line"></div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			<span class="comment">// Allows post-processing of the bean factory in context subclasses.</span></div><div class="line">			postProcessBeanFactory(beanFactory);</div><div class="line"></div><div class="line">			<span class="comment">// Invoke factory processors registered as beans in the context.</span></div><div class="line">			invokeBeanFactoryPostProcessors(beanFactory);</div><div class="line"></div><div class="line">			<span class="comment">// Register bean processors that intercept bean creation.</span></div><div class="line">			registerBeanPostProcessors(beanFactory);</div><div class="line"></div><div class="line">			<span class="comment">// Initialize message source for this context.</span></div><div class="line">			initMessageSource();</div><div class="line"></div><div class="line">			<span class="comment">// Initialize event multicaster for this context.</span></div><div class="line">			initApplicationEventMulticaster();</div><div class="line"></div><div class="line">			<span class="comment">// Initialize other special beans in specific context subclasses.</span></div><div class="line">			onRefresh();</div><div class="line"></div><div class="line">			<span class="comment">// Check for listener beans and register them.</span></div><div class="line">			registerListeners();</div><div class="line"></div><div class="line">			<span class="comment">// Instantiate all remaining (non-lazy-init) singletons.</span></div><div class="line">			finishBeanFactoryInitialization(beanFactory);</div><div class="line"></div><div class="line">			<span class="comment">// Last step: publish corresponding event.</span></div><div class="line">			finishRefresh();</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">catch</span> (BeansException ex) &#123;</div><div class="line">			<span class="keyword">if</span> (logger.isWarnEnabled()) &#123;</div><div class="line">				logger.warn(<span class="string">"Exception encountered during context initialization - "</span> +</div><div class="line">						<span class="string">"cancelling refresh attempt: "</span> + ex);</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			<span class="comment">// Destroy already created singletons to avoid dangling resources.</span></div><div class="line">			destroyBeans();</div><div class="line"></div><div class="line">			<span class="comment">// Reset 'active' flag.</span></div><div class="line">			cancelRefresh(ex);</div><div class="line"></div><div class="line">			<span class="comment">// Propagate exception to caller.</span></div><div class="line">			<span class="keyword">throw</span> ex;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">finally</span> &#123;</div><div class="line">			<span class="comment">// Reset common introspection caches in Spring's core, since we</span></div><div class="line">			<span class="comment">// might not ever need metadata for singleton beans anymore...</span></div><div class="line">			resetCommonCaches();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>整个容器启动过程如下图：<img src="https://upload-images.jianshu.io/upload_images/1754553-c418cebd6e571d1d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Spring容器启动过程"></p>
+<h1 id="BeanDefinition和Bean"><a href="#BeanDefinition和Bean" class="headerlink" title="BeanDefinition和Bean"></a>BeanDefinition和Bean</h1><p>在Spring容器中，每一个Bean都会有一个对应的BeanDefinition。这个BeanDefinition，是通过各种解析之后，生成的关于Bean的定义信息。</p>
+<p>粗略地说，整个启动过程可以分为两个主要步骤：1.创建<code>BeanDefinition</code>；2.创建<code>Bean</code>。</p>
+<ol>
+<li>注册所有的Bean定义信息（standard initialization）。ApplicationContext在启动时，首先将解析各种配置信息（比如<bean>标签，@Bean注解，@Component注解等等），为每个需要创建的Bean，都生成一个BeanDefinition对象，并注册到DefaultListableBeanFactory的beanDefinitionMap属性中（通过BeanDefinitionRegistry的registerBeanDefinition方法）。</bean></li>
+<li>根据BeanDefinition创建Bean，并建立Bean和Bean之间的依赖关系，最终会将这些Bean放入DefaultListableBeanFactory的singletonObjects属性（继承自DefaultSingletonBeanRegistry）中，以供外层应用程序使用。</li>
+</ol>
+<h1 id="拓展点"><a href="#拓展点" class="headerlink" title="拓展点"></a>拓展点</h1><p>容器的启动会经过以下步骤：</p>
+<p>创建BeanDefinition –&gt; 创建BeanPostProcessor –&gt; 注册ApplicationListener –&gt; Bean实例化 –&gt; 为Bean设置属性 –&gt; 调用Bean的初始化方法。</p>
+<p>在容器的启动过程中，Spring提供了很多拓展点（BeanDefinition创建完成后，Bean的实例化前后，Bean的初始化前后等等），可以让用户自定义一些操作，然后Spring会在启动过程中的特定位置，执行用户自定义的操作。</p>
+<p>这些拓展点包括：</p>
+<h2 id="BeanDefinitionRegistryPostProcessor"><a href="#BeanDefinitionRegistryPostProcessor" class="headerlink" title="BeanDefinitionRegistryPostProcessor"></a>BeanDefinitionRegistryPostProcessor</h2><p>这个接口是<code>BeanFactoryPostProcessor</code>的子接口。</p>
+<p>在BeanDefinition解析并创建完成后，会执行这个接口的实现类的<code>postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry)</code>方法。可以通过这个接口，为容器增加一些自己需要的BeanDefinition。</p>
+<h2 id="BeanFactoryPostProcessor"><a href="#BeanFactoryPostProcessor" class="headerlink" title="BeanFactoryPostProcessor"></a>BeanFactoryPostProcessor</h2><p>同样是在BeanDefinition解析完并创建完成后，会执行这个接口的实现类的<code>postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)</code>方法。</p>
+<h2 id="InstantiationAwareBeanPostProcessor"><a href="#InstantiationAwareBeanPostProcessor" class="headerlink" title="InstantiationAwareBeanPostProcessor"></a>InstantiationAwareBeanPostProcessor</h2><p>这个接口是<code>BeanPostProcessor</code>的子接口。</p>
+<p>在Bean的实例化（调用构造器）前，会执行这个接口的<code>postProcessBeforeInstantiation(Class&lt;?&gt; beanClass, String beanName)</code>方法；在Bean的实例化之后，会先后调用该接口的<code>boolean postProcessAfterInstantiation(Object bean, String beanName)</code>方法和<code>PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName)</code>方法。</p>
+<h2 id="BeanPostProcessor"><a href="#BeanPostProcessor" class="headerlink" title="BeanPostProcessor"></a>BeanPostProcessor</h2><p>在Bean的初始化前，会执行该接口的<code>Object postProcessBeforeInitialization(Object bean, String beanName)</code>方法；在Bean的初始化之后，会执行该接口的<code>Object postProcessAfterInitialization(Object bean, String beanName)</code>方法。</p>
+<h2 id="ApplicationListener"><a href="#ApplicationListener" class="headerlink" title="ApplicationListener"></a>ApplicationListener</h2><p>用户可以实现该接口的<code>void onApplicationEvent(E event)</code>方法，监听某个事件。之后在该时间发生时，容器会通过<code>ApplicationEventMulticaster</code>调用该监听器的onApplicationEvent方法。</p>
+<p>需要注意的是，这些拓展接口的实现类，也都必须作为Bean，被注册到容器中才可以生效。</p>
+<h1 id="几个重要的属性"><a href="#几个重要的属性" class="headerlink" title="几个重要的属性"></a>几个重要的属性</h1><p>所谓的Spring容器，往简单了说其实就是个Map，这个Map的键是Bean的名称，值是这个Bean的实例。</p>
+<p>在Spring中，有几个比较重要的属性，如下：</p>
+<h2 id="beanFactory"><a href="#beanFactory" class="headerlink" title="beanFactory"></a>beanFactory</h2><p>该属性在<code>GenericApplicationContext</code>中。Bean工厂，顾名思义，这个对象存储了Spring容器中所有的Bean定义信息和Bean实例。</p>
+<p>完整定义为<code>private final DefaultListableBeanFactory beanFactory;</code>。</p>
+<p>DefaultListableBeanFactory的继承体系如下图所示：<img src="https://upload-images.jianshu.io/upload_images/1754553-36f5e89b0262e4db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="DefaultListableBeanFactory继承体系"></p>
+<h2 id="beanDefinitionMap"><a href="#beanDefinitionMap" class="headerlink" title="beanDefinitionMap"></a>beanDefinitionMap</h2><p>该属性在<code>DefaultListableBeanFactory</code>中，类型为Map，键为Bean名称，值为BeanDefinition对象。</p>
+<p>完整定义为<code>private final Map&lt;String, BeanDefinition&gt; beanDefinitionMap = new ConcurrentHashMap&lt;&gt;(256);</code>。</p>
+<h2 id="beanDefinitionNames"><a href="#beanDefinitionNames" class="headerlink" title="beanDefinitionNames"></a>beanDefinitionNames</h2><p>该属性在在<code>DefaultListableBeanFactory</code>中，类型为List，存储了容器中所有的Bean的名称。</p>
+<p>完整定义为<code>private volatile List&lt;String&gt; beanDefinitionNames = new ArrayList&lt;&gt;(256);</code>。</p>
+<h2 id="singletonObjects"><a href="#singletonObjects" class="headerlink" title="singletonObjects"></a>singletonObjects</h2><p>该属性在<code>DefaultSingletonBeanRegistry</code>中，类型为Map，存储了容器中所有的单例Bean实例，键为Bean名称，值为单例Bean实例。</p>
+<p>DefaultListableBeanFactory继承了DefaultSingletonBeanRegistry，所以拥有这个属性。</p>
+<p>完整定义为<code>private final Map&lt;String, Object&gt; singletonObjects = new ConcurrentHashMap&lt;&gt;(256);</code>。</p>
+<h2 id="beanPostProcessors"><a href="#beanPostProcessors" class="headerlink" title="beanPostProcessors"></a>beanPostProcessors</h2><p>该属性在<code>AbstractBeanFactory</code>中，类型为List，存储了容器中所有的BeanPostProcessor。</p>
+<p>DefaultListableBeanFactory继承了AbstractBeanFactory，所以拥有这个属性。</p>
+<p>完整定义为<code>private final List&lt;BeanPostProcessor&gt; beanPostProcessors = new CopyOnWriteArrayList&lt;&gt;();</code>。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/22/Spring/IoC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanchaoo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanchaoo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/22/Spring/IoC/" itemprop="url">IoC</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-22T22:43:35+08:00">
+                2019-01-22
               </time>
             
 
@@ -486,7 +828,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/23/Spring/Spring-目录/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/22/Spring/声明式事务管理/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="fanchaoo">
@@ -505,7 +847,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/10/23/Spring/Spring-目录/" itemprop="url">Spring-目录</a></h1>
+                <a class="post-title-link" href="/2019/01/22/Spring/声明式事务管理/" itemprop="url">声明式事务管理</a></h1>
         
 
         <div class="post-meta">
@@ -517,149 +859,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-23T21:52:51+08:00">
-                2017-10-23
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Spring/" itemprop="url" rel="index">
-                    <span itemprop="name">Spring</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="1-容器启动过程（Bean的生命周期）"><a href="#1-容器启动过程（Bean的生命周期）" class="headerlink" title="1. 容器启动过程（Bean的生命周期）"></a>1. 容器启动过程（Bean的生命周期）</h1><h1 id="2-IoC"><a href="#2-IoC" class="headerlink" title="2. IoC"></a>2. IoC</h1><h1 id="3-一些拓展点"><a href="#3-一些拓展点" class="headerlink" title="3. 一些拓展点"></a>3. 一些拓展点</h1><h1 id="3-AOP"><a href="#3-AOP" class="headerlink" title="3. AOP"></a>3. AOP</h1><h1 id="4-声明式事务管理"><a href="#4-声明式事务管理" class="headerlink" title="4. 声明式事务管理"></a>4. 声明式事务管理</h1>
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/23/Spring/声明式事务管理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fanchaoo">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="fanchaoo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/10/23/Spring/声明式事务管理/" itemprop="url">声明式事务管理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-23T21:52:51+08:00">
-                2017-10-23
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-22T22:40:11+08:00">
+                2019-01-22
               </time>
             
 
@@ -773,7 +974,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/23/Spring/容器启动过程（Bean的生命周期）/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/22/Spring/Spring-目录/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="fanchaoo">
@@ -792,7 +993,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/10/23/Spring/容器启动过程（Bean的生命周期）/" itemprop="url">容器启动过程（Bean的生命周期）</a></h1>
+                <a class="post-title-link" href="/2019/01/22/Spring/Spring-目录/" itemprop="url">Spring-目录</a></h1>
         
 
         <div class="post-meta">
@@ -804,8 +1005,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-23T21:52:51+08:00">
-                2017-10-23
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-22T20:12:20+08:00">
+                2019-01-22
               </time>
             
 
@@ -866,46 +1067,7 @@
       
         
           
-            <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>今天说一下Spring容器的启动过程，这个启动过程中其实包含了单例Bean的生命周期。</p>
-<p>下面的main方法中的两行代码，其实就是在通过指定一个配置类，然后启动Spring容器。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public static void main(String[] args) throws InterruptedException &#123;</div><div class="line"></div><div class="line">		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(Config.class);</div><div class="line">		applicationContext.start();</div><div class="line">		</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>跟踪代码，最后会执行到<code>AbstractApplicationContext</code>的<code>refresh()</code>方法中：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public void refresh() throws BeansException, IllegalStateException &#123;</div><div class="line">	synchronized (this.startupShutdownMonitor) &#123;</div><div class="line">		// Prepare this context for refreshing.</div><div class="line">		prepareRefresh();</div><div class="line"></div><div class="line">		// Tell the subclass to refresh the internal bean factory.</div><div class="line">		ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();</div><div class="line"></div><div class="line">		// Prepare the bean factory for use in this context.</div><div class="line">		prepareBeanFactory(beanFactory);</div><div class="line"></div><div class="line">		try &#123;</div><div class="line">			// Allows post-processing of the bean factory in context subclasses.</div><div class="line">			postProcessBeanFactory(beanFactory);</div><div class="line"></div><div class="line">			// Invoke factory processors registered as beans in the context.</div><div class="line">			invokeBeanFactoryPostProcessors(beanFactory);</div><div class="line"></div><div class="line">			// Register bean processors that intercept bean creation.</div><div class="line">			registerBeanPostProcessors(beanFactory);</div><div class="line"></div><div class="line">			// Initialize message source for this context.</div><div class="line">			initMessageSource();</div><div class="line"></div><div class="line">			// Initialize event multicaster for this context.</div><div class="line">			initApplicationEventMulticaster();</div><div class="line"></div><div class="line">			// Initialize other special beans in specific context subclasses.</div><div class="line">			onRefresh();</div><div class="line"></div><div class="line">			// Check for listener beans and register them.</div><div class="line">			registerListeners();</div><div class="line"></div><div class="line">			// Instantiate all remaining (non-lazy-init) singletons.</div><div class="line">			finishBeanFactoryInitialization(beanFactory);</div><div class="line"></div><div class="line">			// Last step: publish corresponding event.</div><div class="line">			finishRefresh();</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		catch (BeansException ex) &#123;</div><div class="line">			if (logger.isWarnEnabled()) &#123;</div><div class="line">				logger.warn(&quot;Exception encountered during context initialization - &quot; +</div><div class="line">						&quot;cancelling refresh attempt: &quot; + ex);</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			// Destroy already created singletons to avoid dangling resources.</div><div class="line">			destroyBeans();</div><div class="line"></div><div class="line">			// Reset &apos;active&apos; flag.</div><div class="line">			cancelRefresh(ex);</div><div class="line"></div><div class="line">			// Propagate exception to caller.</div><div class="line">			throw ex;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		finally &#123;</div><div class="line">			// Reset common introspection caches in Spring&apos;s core, since we</div><div class="line">			// might not ever need metadata for singleton beans anymore...</div><div class="line">			resetCommonCaches();</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>整个容器启动过程如下图：<img src="https://upload-images.jianshu.io/upload_images/1754553-c418cebd6e571d1d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Spring容器启动过程"></p>
-<h1 id="BeanDefinition和Bean"><a href="#BeanDefinition和Bean" class="headerlink" title="BeanDefinition和Bean"></a>BeanDefinition和Bean</h1><p>在Spring容器中，每一个Bean都会有一个对应的BeanDefinition。这个BeanDefinition，是通过各种解析之后，生成的关于Bean的定义信息。</p>
-<p>粗略地说，整个启动过程可以分为两个主要步骤：1.创建<code>BeanDefinition</code>；2.创建<code>Bean</code>。</p>
-<ol>
-<li>注册所有的Bean定义信息（standard initialization）。ApplicationContext在启动时，首先将解析各种配置信息（比如<bean>标签，@Bean注解，@Component注解等等），为每个需要创建的Bean，都生成一个BeanDefinition对象，并注册到DefaultListableBeanFactory的beanDefinitionMap属性中（通过BeanDefinitionRegistry的registerBeanDefinition方法）。</bean></li>
-<li>根据BeanDefinition创建Bean，并建立Bean和Bean之间的依赖关系，最终会将这些Bean放入DefaultListableBeanFactory的singletonObjects属性（继承自DefaultSingletonBeanRegistry）中，以供外层应用程序使用。</li>
-</ol>
-<h1 id="拓展点"><a href="#拓展点" class="headerlink" title="拓展点"></a>拓展点</h1><p>容器的启动会经过以下步骤：</p>
-<p>创建BeanDefinition –&gt; 创建BeanPostProcessor –&gt; 注册ApplicationListener –&gt; Bean实例化 –&gt; 为Bean设置属性 –&gt; 调用Bean的初始化方法。</p>
-<p>在容器的启动过程中，Spring提供了很多拓展点（BeanDefinition创建完成后，Bean的实例化前后，Bean的初始化前后等等），可以让用户自定义一些操作，然后Spring会在启动过程中的特定位置，执行用户自定义的操作。</p>
-<p>这些拓展点包括：</p>
-<h2 id="BeanDefinitionRegistryPostProcessor"><a href="#BeanDefinitionRegistryPostProcessor" class="headerlink" title="BeanDefinitionRegistryPostProcessor"></a>BeanDefinitionRegistryPostProcessor</h2><p>这个接口是<code>BeanFactoryPostProcessor</code>的子接口。</p>
-<p>在BeanDefinition解析并创建完成后，会执行这个接口的实现类的<code>postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry)</code>方法。可以通过这个接口，为容器增加一些自己需要的BeanDefinition。</p>
-<h2 id="BeanFactoryPostProcessor"><a href="#BeanFactoryPostProcessor" class="headerlink" title="BeanFactoryPostProcessor"></a>BeanFactoryPostProcessor</h2><p>同样是在BeanDefinition解析完并创建完成后，会执行这个接口的实现类的<code>postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)</code>方法。</p>
-<h2 id="InstantiationAwareBeanPostProcessor"><a href="#InstantiationAwareBeanPostProcessor" class="headerlink" title="InstantiationAwareBeanPostProcessor"></a>InstantiationAwareBeanPostProcessor</h2><p>这个接口是<code>BeanPostProcessor</code>的子接口。</p>
-<p>在Bean的实例化（调用构造器）前，会执行这个接口的<code>postProcessBeforeInstantiation(Class&lt;?&gt; beanClass, String beanName)</code>方法；在Bean的实例化之后，会先后调用该接口的<code>boolean postProcessAfterInstantiation(Object bean, String beanName)</code>方法和<code>PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName)</code>方法。</p>
-<h2 id="BeanPostProcessor"><a href="#BeanPostProcessor" class="headerlink" title="BeanPostProcessor"></a>BeanPostProcessor</h2><p>在Bean的初始化前，会执行该接口的<code>Object postProcessBeforeInitialization(Object bean, String beanName)</code>方法；在Bean的初始化之后，会执行该接口的<code>Object postProcessAfterInitialization(Object bean, String beanName)</code>方法。</p>
-<h2 id="ApplicationListener"><a href="#ApplicationListener" class="headerlink" title="ApplicationListener"></a>ApplicationListener</h2><p>用户可以实现该接口的<code>void onApplicationEvent(E event)</code>方法，监听某个事件。之后在该时间发生时，容器会通过<code>ApplicationEventMulticaster</code>调用该监听器的onApplicationEvent方法。</p>
-<p>需要注意的是，这些拓展接口的实现类，也都必须作为Bean，被注册到容器中才可以生效。</p>
-<h1 id="几个重要的属性"><a href="#几个重要的属性" class="headerlink" title="几个重要的属性"></a>几个重要的属性</h1><p>所谓的Spring容器，往简单了说其实就是个Map，这个Map的键是Bean的名称，值是这个Bean的实例。</p>
-<p>在Spring中，有几个比较重要的属性，如下：</p>
-<h2 id="beanFactory"><a href="#beanFactory" class="headerlink" title="beanFactory"></a>beanFactory</h2><p>该属性在<code>GenericApplicationContext</code>中。Bean工厂，顾名思义，这个对象存储了Spring容器中所有的Bean定义信息和Bean实例。</p>
-<p>完整定义为<code>private final DefaultListableBeanFactory beanFactory;</code>。</p>
-<p>DefaultListableBeanFactory的继承体系如下图所示：<img src="https://upload-images.jianshu.io/upload_images/1754553-36f5e89b0262e4db.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="DefaultListableBeanFactory继承体系"></p>
-<h2 id="beanDefinitionMap"><a href="#beanDefinitionMap" class="headerlink" title="beanDefinitionMap"></a>beanDefinitionMap</h2><p>该属性在<code>DefaultListableBeanFactory</code>中，类型为Map，键为Bean名称，值为BeanDefinition对象。</p>
-<p>完整定义为<code>private final Map&lt;String, BeanDefinition&gt; beanDefinitionMap = new ConcurrentHashMap&lt;&gt;(256);</code>。</p>
-<h2 id="beanDefinitionNames"><a href="#beanDefinitionNames" class="headerlink" title="beanDefinitionNames"></a>beanDefinitionNames</h2><p>该属性在在<code>DefaultListableBeanFactory</code>中，类型为List，存储了容器中所有的Bean的名称。</p>
-<p>完整定义为<code>private volatile List&lt;String&gt; beanDefinitionNames = new ArrayList&lt;&gt;(256);</code>。</p>
-<h2 id="singletonObjects"><a href="#singletonObjects" class="headerlink" title="singletonObjects"></a>singletonObjects</h2><p>该属性在<code>DefaultSingletonBeanRegistry</code>中，类型为Map，存储了容器中所有的单例Bean实例，键为Bean名称，值为单例Bean实例。</p>
-<p>DefaultListableBeanFactory继承了DefaultSingletonBeanRegistry，所以拥有这个属性。</p>
-<p>完整定义为<code>private final Map&lt;String, Object&gt; singletonObjects = new ConcurrentHashMap&lt;&gt;(256);</code>。</p>
-<h2 id="beanPostProcessors"><a href="#beanPostProcessors" class="headerlink" title="beanPostProcessors"></a>beanPostProcessors</h2><p>该属性在<code>AbstractBeanFactory</code>中，类型为List，存储了容器中所有的BeanPostProcessor。</p>
-<p>DefaultListableBeanFactory继承了AbstractBeanFactory，所以拥有这个属性。</p>
-<p>完整定义为<code>private final List&lt;BeanPostProcessor&gt; beanPostProcessors = new CopyOnWriteArrayList&lt;&gt;();</code>。</p>
-
+            <h1 id="1-容器启动过程（Bean的生命周期）"><a href="#1-容器启动过程（Bean的生命周期）" class="headerlink" title="1. 容器启动过程（Bean的生命周期）"></a>1. 容器启动过程（Bean的生命周期）</h1><h1 id="2-IoC"><a href="#2-IoC" class="headerlink" title="2. IoC"></a>2. IoC</h1><h1 id="3-一些拓展点"><a href="#3-一些拓展点" class="headerlink" title="3. 一些拓展点"></a>3. 一些拓展点</h1><h1 id="3-AOP"><a href="#3-AOP" class="headerlink" title="3. AOP"></a>3. AOP</h1><h1 id="4-声明式事务管理"><a href="#4-声明式事务管理" class="headerlink" title="4. 声明式事务管理"></a>4. 声明式事务管理</h1>
           
         
       
@@ -986,7 +1148,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -997,7 +1159,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1008,7 +1170,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

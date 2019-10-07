@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="碎碎念," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="小学的时候，印象里学校好像开了微机课，不过现在早就忘记了当时到底上了些什么东西了。 05年左右，小学五年级，叔叔回家拿了一个笔记本电脑，接着家里的电话线上网。那是我第一次接触到网络，隐约知道有个地方可以想搜什么就搜什么，后来，才知道那是百度。当时很多人都去网吧玩游戏，那时候梦幻西游很火，不过我是在七八年以后，才第一次去了网吧，呵呵，一个不折不扣的“好学生”。 06年，上了初中。大家都开始玩穿越火线">
+<meta name="keywords" content="碎碎念">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CRUD Boy之路">
+<meta property="og:url" content="http://yoursite.com/2019/10/06/碎碎念/CRUD Boy之路/index.html">
+<meta property="og:site_name" content="fanchaoo">
+<meta property="og:description" content="小学的时候，印象里学校好像开了微机课，不过现在早就忘记了当时到底上了些什么东西了。 05年左右，小学五年级，叔叔回家拿了一个笔记本电脑，接着家里的电话线上网。那是我第一次接触到网络，隐约知道有个地方可以想搜什么就搜什么，后来，才知道那是百度。当时很多人都去网吧玩游戏，那时候梦幻西游很火，不过我是在七八年以后，才第一次去了网吧，呵呵，一个不折不扣的“好学生”。 06年，上了初中。大家都开始玩穿越火线">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-10-07T12:38:28.643Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CRUD Boy之路">
+<meta name="twitter:description" content="小学的时候，印象里学校好像开了微机课，不过现在早就忘记了当时到底上了些什么东西了。 05年左右，小学五年级，叔叔回家拿了一个笔记本电脑，接着家里的电话线上网。那是我第一次接触到网络，隐约知道有个地方可以想搜什么就搜什么，后来，才知道那是百度。当时很多人都去网吧玩游戏，那时候梦幻西游很火，不过我是在七八年以后，才第一次去了网吧，呵呵，一个不折不扣的“好学生”。 06年，上了初中。大家都开始玩穿越火线">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/06/碎碎念/CRUD Boy之路/"/>
+
+
+
+
+
+  <title>CRUD Boy之路 | fanchaoo</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?e82dfc2f4993e27da0bec06ea192ae31";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">fanchaoo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/06/碎碎念/CRUD Boy之路/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanchaoo">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanchaoo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CRUD Boy之路</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-06T20:00:00+08:00">
+                2019-10-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/碎碎念/" itemprop="url" rel="index">
+                    <span itemprop="name">碎碎念</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>小学的时候，印象里学校好像开了微机课，不过现在早就忘记了当时到底上了些什么东西了。</p>
+<p>05年左右，小学五年级，叔叔回家拿了一个笔记本电脑，接着家里的电话线上网。那是我第一次接触到网络，隐约知道有个地方可以想搜什么就搜什么，后来，才知道那是百度。当时很多人都去网吧玩游戏，那时候梦幻西游很火，不过我是在七八年以后，才第一次去了网吧，呵呵，一个不折不扣的“好学生”。</p>
+<p>06年，上了初中。大家都开始玩穿越火线，地下城。可能当时胆小不好让家人知道，也不舍的花那个钱，所以一次也没去过网吧。当时我妈给我买了个步步高9588的学习机。说是学习机，其实已经相当于现在的半个智能手机了，可以打游戏，拍照，看视频，听歌…然后基本占据了我大多数业务时间了…这是我第一次这么长时间地接触电子产品，这个东西对我的影响应该说是相当地大。</p>
+<p>09年，初三的时候，每到周末就去我妈公司里去玩电脑。那时候注册了自己的第一个QQ号，然后就用了十年，蛤蛤蛤。</p>
+<p>中考前夕，家里买了个台式机，接了宽带。考完试的两个月，几乎是和电脑泡在一起的，每天应该跟现在一样，每天接触个十几小时。现在想想，这两个月应该算是我人生一个转折点吧，就是在这个时候，想要学计算机的想法开始在心里萌芽。<br>记得当时泡在网上看仙剑3，还把自己的头像换成飞蓬和重楼，呵呵，记得当时QQ头像还得升到一个太阳之后才能换成任意图片。记得当时整天在玩QQ飞车，整天在折腾各种图标点亮，QQ空间装扮。那些现在看来好像没什么意义的日子，却让我怀念到现在。那时候喜欢上L，总想着和她聊天。甚至想着能不能登她QQ看看她的一些小秘密，想着要是能当一个黑客改多好啊，想干什么干什么。于是第一次萌生了学计算机的念头，蛤蛤，当时我可是想当黑客的，现在还是变成了一个crud boy。</p>
+<p>09年后，上了高中，基本就放假的时候玩玩电脑，慢慢开始接触了豆瓣，微博这些东西。后来12年报志愿，选了计算机和心理学，蛤蛤蛤，现在想想，我当时要是选了心理学，现在是不是已经失业了。13年报志愿的时候，一根筋全部选的计算机，现在也回忆不起当时怎么会那么倔强。</p>
+<p>13年上大学，刚上大学都迷茫，也不知道要学些什么才有意义。第一学期没有专业课，就自己跑到图书馆，找一些书看。其实都看不懂，蛤蛤蛤，还记得当时翻了翻什么网页三剑客，还看了看计算机网络，奈何这么多年过去了，我还是没学好计算机网络。<br>14年开始接触C++，当时学的还算比较卖力，但也不知道学完能干啥，整天对着个黑屏小窗口，输出一些东西。后来听说数据结构有用，就使劲学数据结构，可学完之后依然不知道学了这些有啥用。那时候慢慢开始接触知乎，网易云音乐这些东西。然后到现在，这两个软件可以说是对我影响最大的两个软件了吧。当时“年幼无知”，整天看知乎上一些大V的言论，以为捡到了宝一样。虽然现在刷的比较少了，但不得不承认，那些东西还是有很大参考价值的。<br>接着开始慢慢学Java，学数据库，学了些前端，才慢慢有一些可以看到的东西，才知道Java可以做网站，JS可以写前端。当时也看了一些书，看了一些教学视频，然后就不知不觉走上了CRUD这条路。即便能简单得写写后台了，但不得不承认，4年毕业的时候，我的专业课基础真的是学的稀巴烂，所以当时面试的几个大厂，最终还是一个都没进。<br>毕业后进了ZZ，慢慢开始写一些简单的业务，但感觉提升不大。平时时间虽多，但也没花多少时间学习，整天打王者荣耀，看视频，看各种热剧，综艺。不过期间居然抽时间看了几本讲计算机组成和汇编的书，也开始慢慢思考自己当时学的各个专业课到底是怎么联系到一块的。后来开始做厂店通，才慢慢感觉到挑战性，慢慢开始有意识地想着能深入学些东西。然而，一年半也没怎么涨工资，所以还是溜了。<br>裸辞了三个月，没敢跟家里说。第一个月感觉还行，每天学点想学的东西，但慢慢地就开始焦虑了，年后找工作找了一个月。折腾又折腾，来到了现在这家公司，虽然工资翻了一倍，但也彻底过上了996的社畜生活，基本上告别了一切业余生活。由于某些原因，不知道多少个晚上，都熬到了后半夜。一周内有一半时间12点后回去都是常事。加上公司流程制度的混乱，以及对技术的不重视，心里这种无力感越来越强。<br>在这几个月的时间里，自己对技术的看法慢慢地开始有些转变。以前的自己，还是一贯的geek思维，可惜这些时间慢慢发现，要想当一个geek实在是太难，天资一般，又没那么努力，怎么可能天上掉馅饼让自己变强。<br>大多数编程语言和技术只是被商业驱动的一种工程层面的技能，既不是真理也不是技术，甚至比不上大多数经久时间打磨的制造业，没必要上升到信仰的高度。当然不是说技术无价值，技术很有价值。只可惜一个很古老的道理，“遍身罗绮者，不是养蚕人”。技术者在某个层面讲，“很伟大”，只可惜如果想要考纯粹的技术发家致富，那几率应该说是比较小了。因为再怎么着，技术者也只是一个棋子的角色，一个螺丝钉的角色。技术最终还是用来解决问题的，还是要服务于业务的，最终影响人们生活的还是业务，虽然大多数技术人心里都多多少少都有点看不上写业务代码。<br>这么日复一日的搬砖，实在是不太能看得到希望。努把力吧，但愿有一天，自己能过上自由职业的生活。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/碎碎念/" rel="tag"># 碎碎念</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/21/SpringMVC/一个HTTP请求是如何从Tomcat流转到SpringMVC的/" rel="next" title="一个HTTP请求是如何从Tomcat流转到SpringMVC的.md">
+                <i class="fa fa-chevron-left"></i> 一个HTTP请求是如何从Tomcat流转到SpringMVC的.md
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  <div onclick="showGitment()" id="gitment_title" class="gitment_title">显示 Gitment 评论</div>
+  <div id="container" style="display:none"></div>
+  <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+  <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+  <script>
+  const myTheme = {
+    render(state, instance) {
+      const container = document.createElement('div');
+      container.lang = "en-US";
+      container.className = 'gitment-container gitment-root-container';
+      container.appendChild(instance.renderHeader(state, instance));
+      container.appendChild(instance.renderEditor(state, instance));
+      container.appendChild(instance.renderComments(state, instance));
+      container.appendChild(instance.renderFooter(state, instance));
+      return container;
+    }
+  }
+  function showGitment() {
+    $("#gitment_title").attr("style", "display:none");
+    $("#container").attr("style", "").addClass("gitment_container");
+    var gitment = new Gitment({
+      id: '1570363200000',
+      theme: myTheme,
+      owner: 'fanchaoo',
+      repo: 'blog-comment',
+      oauth: {
+        client_id: '58efaaa5905eec99646f',
+        client_secret: '2d2e42ab949f1b204e58cf0272a8a16c1cdb7431'
+      }
+    });
+    gitment.render('container');
+  }
+  </script>
+
+  
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="fanchaoo" />
+          <p class="site-author-name" itemprop="name">fanchaoo</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/fanchaoo" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                    
+                      微博
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://douban.com/people/fc100" target="_blank" title="豆瓣">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                    
+                      豆瓣
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://music.163.com/#/user/home?id=19243474" target="_blank" title="网易云">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                    
+                      网易云
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fanchaoo</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

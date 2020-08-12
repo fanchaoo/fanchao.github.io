@@ -102,13 +102,13 @@
 <meta property="og:site_name" content="fanchaoo">
 <meta property="og:description" content="Servlet的service方法，是整个HTTP请求处理流程的一个入口。在某个Controller方法上打上断点，可以观察到如下调用栈：  由于DispatcherServlet继承自HttpServlet，也就间接实现了Servlet接口。DispatcherServlet的类图如下：  所以请求到来时，首先会进入DispatcherServlet的父类HttpServlet的service方">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-0c28bd83fe96ecb8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1754553-07377b614e6d7193.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-10-10T16:51:28.962Z">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1754553-0c28bd83fe96ecb8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1754553-07377b614e6d7193.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2020-08-12T09:15:58.766Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一个HTTP请求是如何从Tomcat流转到SpringMVC的">
 <meta name="twitter:description" content="Servlet的service方法，是整个HTTP请求处理流程的一个入口。在某个Controller方法上打上断点，可以观察到如下调用栈：  由于DispatcherServlet继承自HttpServlet，也就间接实现了Servlet接口。DispatcherServlet的类图如下：  所以请求到来时，首先会进入DispatcherServlet的父类HttpServlet的service方">
-<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/1754553-0c28bd83fe96ecb8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/1754553-0c28bd83fe96ecb8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
 
@@ -391,9 +391,9 @@
 
       
         <p><strong>Servlet的service方法</strong>，是整个HTTP请求处理流程的一个入口。在某个Controller方法上打上断点，可以观察到如下调用栈：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/1754553-0c28bd83fe96ecb8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1754553-0c28bd83fe96ecb8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>由于DispatcherServlet继承自HttpServlet，也就间接实现了Servlet接口。DispatcherServlet的类图如下：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/1754553-07377b614e6d7193.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/1754553-07377b614e6d7193.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
 <p>所以请求到来时，首先会进入DispatcherServlet的父类HttpServlet的service方法：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(ServletRequest req, ServletResponse res)</span></span></div><div class="line"><span class="function">    <span class="keyword">throws</span> ServletException, IOException </span>&#123;</div><div class="line"></div><div class="line">    HttpServletRequest  request;</div><div class="line">    HttpServletResponse response;</div><div class="line"></div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">        request = (HttpServletRequest) req;</div><div class="line">        response = (HttpServletResponse) res;</div><div class="line">    &#125; <span class="keyword">catch</span> (ClassCastException e) &#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ServletException(<span class="string">"non-HTTP request or response"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// 只是做下类型强转，然后调用另外一个方法</span></div><div class="line">    service(request, response);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>在上面方法的末尾，会调用另外一个与HTTP协议相关的service方法，这个方法的定义为<code>protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException</code>。FrameworkServlet实现了这个方法，所以下一步来到FrameworkServlet的协议相关的service方法：</p>
@@ -656,7 +656,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2019</span>
+  <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
